@@ -5,7 +5,7 @@
     <% if user_signed_in? %>
        <div class="greeting"> 
         <p> こんにちは、 </P>
-        <%= link_to current_user.name,user_path(@prototypes) %>
+        <%= link_to current_user.name, user_path(current_user.id) %>
      
         <%#= link_to  @prototype.user.id, user_path(@prototype.user.id) %>
 

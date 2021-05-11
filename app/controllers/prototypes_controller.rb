@@ -1,5 +1,9 @@
 class PrototypesController < ApplicationController
   
+  before_action :authenticate_user!
+  before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :move_to_index,except: [:destroy, :edit, :new, :create]
+
   def index
     @prototypes = Prototype.includes(:user).order("created_at DESC")
   end
@@ -28,15 +32,7 @@ class PrototypesController < ApplicationController
     @prototype = Prototype.find(params[:id])#.includes(:user)
     @comment = Comment.new
     @comments = @prototype.comment.includes(:user)
-    
-    
   end
-
-  before_action :authenticate_user!
-  before_action :configure_permitted_parameters, if: :devise_controller?
-
-  before_action :move_to_index,except: [:destroy, :edit, :new, :create]
-
 
   def edit
     @prototype = Prototype.find(params[:id])
@@ -74,9 +70,15 @@ class PrototypesController < ApplicationController
    params.require(:prototype).permit(:title, :catch_copy, :concept, :image ).merge(user_id: current_user.id)
    end
 
-   unless user_signed_in?
-    redirect_to action: :index
+
+   def move_to_index
+    unless user_signed_in?
+      redirect_to action: :index
   end
+
+end
+
+ 
 
 end
 
