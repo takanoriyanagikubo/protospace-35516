@@ -1,13 +1,19 @@
 class PrototypesController < ApplicationController
-  
-  before_action :authenticate_user!
-  before_action :configure_permitted_parameters, if: :devise_controller?
-  before_action :move_to_index,except: [:destroy, :edit, :new, :create]
+
+  #before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :move_to_index,except: [:index, :show]
+
+  def move_to_index
+    unless user_signed_in?
+      redirect_to action: :index
+    end
+  end
+
 
   def index
     @prototypes = Prototype.includes(:user).order("created_at DESC")
   end
-
+  
 
   def new
     @prototype = Prototype.new
@@ -36,6 +42,11 @@ class PrototypesController < ApplicationController
 
   def edit
     @prototype = Prototype.find(params[:id])
+
+    unless user_signed_in?
+      redirect_to action: :index
+    end
+
   end
 
   def update
@@ -43,7 +54,7 @@ class PrototypesController < ApplicationController
     @prototype.update(prototype_params)
 
     if @prototype.save
-      redirect_to root_path
+      redirect_to prototype_path(@prototype)
     else
       render partial: "form"
     end
@@ -58,6 +69,7 @@ class PrototypesController < ApplicationController
       render partial: "form"
     end
   end
+  
 
   
     private
@@ -77,8 +89,5 @@ class PrototypesController < ApplicationController
   end
 
 end
-
- 
-
 end
 
