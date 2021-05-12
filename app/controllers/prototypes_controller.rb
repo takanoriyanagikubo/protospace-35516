@@ -1,15 +1,11 @@
 class PrototypesController < ApplicationController
 
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
   #before_action :configure_permitted_parameters, if: :devise_controller?
-  before_action :move_to_index,except: [:index, :show]
+  before_action :move_to_index,except: [:index, :show, :new]
 
-  def move_to_index
-    unless user_signed_in?
-      redirect_to action: :index
-    end
-  end
-
-
+ 
   def index
     @prototypes = Prototype.includes(:user).order("created_at DESC")
   end
@@ -69,7 +65,20 @@ class PrototypesController < ApplicationController
       render partial: "form"
     end
   end
+
   
+  def move_to_index
+    unless user_signed_in?
+      redirect_to  '/users/sign_in'
+    end
+  end
+
+  def move_to_index
+     user_signed_in?
+      redirect_to  action: :index
+    end
+  
+ 
 
   
     private
@@ -83,11 +92,6 @@ class PrototypesController < ApplicationController
    end
 
 
-   def move_to_index
-    unless user_signed_in?
-      redirect_to action: :index
-  end
 
-end
 end
 
